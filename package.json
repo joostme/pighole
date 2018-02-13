@@ -1,5 +1,5 @@
 {
-  "name": "@joostme/pighole",
+  "name": "pighole",
   "version": "1.0.0",
   "description": "A Pighole game library",
   "main": "dist/index",
