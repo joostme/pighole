@@ -16,6 +16,7 @@ export function checkFieldsAndDistributePigs(dice: number): GameFn {
             return changePigsOfCurrentPlayer(-1)(newState);
         } else {
             const field = dice - 1;
+            newState = addTurnToHistory(dice, field)(newState);
             return checkFieldAndChangePigs(field)(newState);
         }
     };
