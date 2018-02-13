@@ -11,7 +11,6 @@ export function startGame(numberOfPlayers: number): GameState {
 export function playTurn(): GameFn {
     return (state: GameState) => {
         const dice = rollDice();
-        console.log('Rolled ' + dice);
         let newState = checkFieldsAndDistributePigs(dice)(state);
         newState = setWinner()(newState);
         newState = subtractTurn()(newState);

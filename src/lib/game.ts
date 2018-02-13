@@ -8,10 +8,11 @@ export function checkPlayers(numberOfPlayers: number) {
 
 export function checkFieldsAndDistributePigs(dice: number): GameFn {
     return (state: GameState) => {
-        const newState = {
+        let newState = {
             ...state
         };
         if (dice === 6) {
+            newState = addTurnToHistory(dice, -1)(newState);
             return changePigsOfCurrentPlayer(-1)(newState);
         } else {
             const field = dice - 1;
@@ -108,6 +109,22 @@ function setTurns(): GameFn {
                 ...state,
                 turns: state.round
             }
+        }
+    }
+}
+
+function addTurnToHistory(dice: number, pigs: number): GameFn {
+    return (state: GameState) => {
+        return {
+            ...state,
+            history: [
+                ...state.history,
+                {
+                    pigs,
+                    rolled: dice,
+                    player: state.currentPlayer
+                }
+            ]
         }
     }
 }

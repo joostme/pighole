@@ -10,7 +10,8 @@ export function getInitialState(numberOfPlayers: number): GameState {
         currentPlayer: 0,
         round: 1,
         turns: 1,
-        winner: null
+        winner: null,
+        history: []
     }
 }
 
