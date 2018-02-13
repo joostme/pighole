@@ -15,9 +15,7 @@ export function checkFieldsAndDistributePigs(dice: number): GameFn {
             newState = addTurnToHistory(dice, -1)(newState);
             return changePigsOfCurrentPlayer(-1)(newState);
         } else {
-            const field = dice - 1;
-            newState = addTurnToHistory(dice, field)(newState);
-            return checkFieldAndChangePigs(field)(newState);
+            return checkFieldAndChangePigs(dice)(newState);
         }
     };
 }
@@ -57,17 +55,19 @@ function changePigsOfCurrentPlayer(pigs: number): GameFn {
     }
 }
 
-function checkFieldAndChangePigs(field: number): GameFn {
+function checkFieldAndChangePigs(dice: number): GameFn {
     return (state: GameState) => {
-        const newState = {
+        let newState = {
             ...state
         };
-        const checkedField = newState.fields[field];
+        const checkedField = newState.fields[dice -1];
         if (checkedField.amount === checkedField.max) {
             checkedField.amount = 0;
+            newState = addTurnToHistory(dice, +checkedField.max)(newState);
             return changePigsOfCurrentPlayer(+checkedField.max)(newState);
         } else {
             checkedField.amount += 1;
+            newState = addTurnToHistory(dice, -1)(newState);
             return changePigsOfCurrentPlayer(-1)(newState);
         }
     }
