@@ -71,7 +71,8 @@ function checkFieldAndChangePigs(dice: number): GameFn {
             checkedField.amount = 0;
             return flow(
                 addTurnToHistory(dice, +checkedField.max),
-                changePigsOfCurrentPlayer(+checkedField.max)
+                changePigsOfCurrentPlayer(+checkedField.max),
+                setNextPlayer()
             )(newState)
         }
 
