@@ -1,5 +1,5 @@
 {
-  "name": "pighole",
+  "name": "@joostme/pighole",
   "version": "1.0.0",
   "description": "A Pighole game library",
   "main": "dist/index",
@@ -23,7 +23,7 @@
     "typescript": "^2.6.2"
   },
   "files": [
-      "dist"
+    "dist"
   ],
   "dependencies": {
     "@types/lodash": "^4.14.102",
