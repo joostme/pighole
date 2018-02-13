@@ -2,6 +2,7 @@ import { GameState, GameFn } from "./models/game-state.model";
 import { getInitialState } from "./lib/state";
 import { checkPlayers, checkFieldsAndDistributePigs, subtractTurn, setNextPlayer, setWinner } from "./lib/game";
 import { rollDice } from "./lib/util";
+import { flow } from "lodash";
 
 export function startGame(numberOfPlayers: number): GameState {
     checkPlayers(numberOfPlayers);
@@ -11,10 +12,11 @@ export function startGame(numberOfPlayers: number): GameState {
 export function playTurn(): GameFn {
     return (state: GameState) => {
         const dice = rollDice();
-        let newState = checkFieldsAndDistributePigs(dice)(state);
-        newState = setWinner()(newState);
-        newState = subtractTurn()(newState);
-        return newState;
+        return flow(
+            checkFieldsAndDistributePigs(dice),
+            setWinner(),
+            subtractTurn()
+        )(state);
     }
 }
 

@@ -1,4 +1,5 @@
 import { GameState, GameFn } from "../models/game-state.model";
+import { flow } from "lodash";
 
 export function checkPlayers(numberOfPlayers: number) {
     if (numberOfPlayers < 2 || numberOfPlayers > 6) {
@@ -8,39 +9,42 @@ export function checkPlayers(numberOfPlayers: number) {
 
 export function checkFieldsAndDistributePigs(dice: number): GameFn {
     return (state: GameState) => {
-        let newState = {
-            ...state
-        };
+
         if (dice === 6) {
-            newState = addTurnToHistory(dice, -1)(newState);
-            return changePigsOfCurrentPlayer(-1)(newState);
-        } else {
-            return checkFieldAndChangePigs(dice)(newState);
+            return flow(
+                addTurnToHistory(dice, -1),
+                changePigsOfCurrentPlayer(-1)
+            )(state)
         }
+
+        return checkFieldAndChangePigs(dice)(state);
     };
 }
 
 export function subtractTurn(): GameFn {
     return (state: GameState) => {
+
         if (state.turns > 1) {
             return {
                 ...state,
                 turns: state.turns - 1
             }
-        } else {
-            return setNextPlayer()(state);
         }
+
+        return setNextPlayer()(state);
     };
 }
 
 export function setWinner(): GameFn {
     return (state: GameState) => {
+
         if (state.players[state.currentPlayer].pigs === 0) {
             return {
                 ...state,
                 winner: state.currentPlayer
             }
         }
+
         return state;
     }
 }
@@ -60,34 +64,44 @@ function checkFieldAndChangePigs(dice: number): GameFn {
         let newState = {
             ...state
         };
-        const checkedField = newState.fields[dice -1];
+
+        const checkedField = newState.fields[dice - 1];
+
         if (checkedField.amount === checkedField.max) {
             checkedField.amount = 0;
-            newState = addTurnToHistory(dice, +checkedField.max)(newState);
-            return changePigsOfCurrentPlayer(+checkedField.max)(newState);
-        } else {
-            checkedField.amount += 1;
-            newState = addTurnToHistory(dice, -1)(newState);
-            return changePigsOfCurrentPlayer(-1)(newState);
+            return flow(
+                addTurnToHistory(dice, +checkedField.max),
+                changePigsOfCurrentPlayer(+checkedField.max)
+            )(newState)
         }
+
+        checkedField.amount += 1;
+
+        return flow(
+            addTurnToHistory(dice, -1),
+            changePigsOfCurrentPlayer(-1)
+        )(newState)
     }
 }
 
 export function setNextPlayer(): GameFn {
     return (state: GameState) => {
-        let newState = {
-            ...state
-        };
-        const maxPlayers = newState.players.length - 1;
-        if (newState.currentPlayer === maxPlayers) {
-            newState = setNextRound()(newState);
-            newState = setTurns()(newState);
-            newState.currentPlayer = 0;
-        } else {
-            newState = setTurns()(newState);
-            newState.currentPlayer += 1;
+        const maxPlayers = state.players.length - 1;
+
+        if (state.currentPlayer === maxPlayers) {
+            return {
+                ...flow(
+                    setNextRound(),
+                    setTurns()
+                )(state),
+                currentPlayer: 0
+            }
         }
-        return newState;
+
+        return {
+            ...setTurns()(state),
+            currentPlayer: state.currentPlayer + 1
+        }
     };
 }
 
@@ -100,16 +114,17 @@ function setNextRound(): GameFn {
 
 function setTurns(): GameFn {
     return (state: GameState) => {
+
         if (state.round >= 3) {
             return {
                 ...state,
                 turns: Infinity
             }
-        } else {
-            return {
-                ...state,
-                turns: state.round
-            }
+        }
+
+        return {
+            ...state,
+            turns: state.round
         }
     }
 }
