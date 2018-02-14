@@ -26,14 +26,14 @@ This will return a new initial game state with the number of players defined
 ### Play a turn
 
 ```ts
-playTurn(state: GameState): GameState
+playTurn()(state: GameState): GameState
 ```
 
 ### Set next player
 After the third round every player can roll as often as he likes to. But he also has the option to not roll.
 
 ```ts
-nextPlayer(state: GameState): GameState
+nextPlayer()(state: GameState): GameState
 ```
 
 ## Game State
