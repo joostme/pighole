@@ -1,6 +1,6 @@
 {
   "name": "pighole",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A Pighole game library",
   "main": "dist/index",
   "typings:": "dist/index",
